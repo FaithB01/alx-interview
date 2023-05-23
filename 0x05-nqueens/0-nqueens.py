@@ -1,65 +1,77 @@
-0x05. N Queens
-==============
+#!/usr/bin/python3
+'''The N queens puzzle is the challenge of placing N non-attacking queens
+on an N×N chessboard. '''
+import sys
+'''
+#1 shitart from the leftmost column
+#2 if all queens are placed, return.
+#3 try all rows in the current column
+# do following for every tried row.
+# a. check if the queen can be placed safely
+# and mark the cell, then check if this can lead to a solution
+# b. if yes, return true
+#c. else, unmarked the cell and goto #a.
+# if all rows have been tried and nothing worked, return false
+# to triggerd backtracking
 
-AlgorithmPython
+# [0,1]
 
--   By Alexa Orrico, Software Engineer at Holberton School
--   Weight: 1
+'''
+if len(sys.argv) < 2:
+    print("Usage: nqueens N")
+    sys.exit(1)
+
+try:
+    num = int(sys.argv[1])
+except ValueError:
+    print("N must be a number")
+    sys.exit(1)
+
+if num < 4:
+    print("N must be at least 4")
+    sys.exit(1)
 
 
-Requirements
-------------
+def solveNQueens(n):
+    """
+    Places N non-attacking queens on an NxN chessboard.
+    """
+    col, pos, neg = set(), set(), set()
+    current_board = [[] for n in range(n)]
+    solved_board = []
 
-### General
+    def backtrack(row):
+        """
+        Tool for solving constraint satisfaction problems.
+        """
+        if row == n:
+            copy = current_board.copy()
+            solved_board.append(copy)
+            return
 
--   Allowed editors: `vi`, `vim`, `emacs`
--   All your files will be interpreted/compiled on Ubuntu 14.04 LTS using `python3` (version 3.4.3)
--   All your files should end with a new line
--   The first line of all your files should be exactly `#!/usr/bin/python3`
--   A `README.md` file, at the root of the folder of the project, is mandatory
--   Your code should use the `PEP 8` style (version 1.7.*)
--   All your files must be executable
+        for c in range(n):
+            if c in col or (row + c) in pos or (row - c) in neg:
+                continue
 
-Tasks
------
+            col.add(c)
+            pos.add(row + c)
+            neg.add(row - c)
 
-### 0\. N queens
+            current_board[row] = [row, c]
 
-mandatory
+            backtrack(row + 1)
 
-![](http://www.crestbook.com/files/Judit-photo1_602x433.jpg)\
-Chess grandmaster [Judit Polgár](https://alx-intranet.hbtn.io/rltoken/fZ1ecpPEmVL9nvkBn8WQGg "Judit Polgár"), the strongest female chess player of all time
+            col.remove(c)
+            pos.remove(row + c)
+            neg.remove(row - c)
+            current_board[row] = []
 
-The N queens puzzle is the challenge of placing N non-attacking queens on an N×N chessboard. Write a program that solves the N queens problem.
+    backtrack(0)
 
--   Usage: `nqueens N`
-    -   If the user called the program with the wrong number of arguments, print `Usage: nqueens N`, followed by a new line, and exit with the status `1`
--   where N must be an integer greater or equal to `4`
-    -   If N is not an integer, print `N must be a number`, followed by a new line, and exit with the status `1`
-    -   If N is smaller than `4`, print `N must be at least 4`, followed by a new line, and exit with the status `1`
--   The program should print every possible solution to the problem
-    -   One solution per line
-    -   Format: see example
-    -   You don't have to print the solutions in a specific order
--   You are only allowed to import the `sys` module
+    return solved_board
 
-Read: [Queen](https://alx-intranet.hbtn.io/rltoken/ghWqI1wvx6g-Ul7nrufMKA "Queen"), [Backtracking](https://alx-intranet.hbtn.io/rltoken/-hgZbgRFkwmxaKnLnCIuEQ "Backtracking")
 
-```
-julien@ubuntu:~/0x08. N Queens$ ./0-nqueens.py 4
-[[0, 1], [1, 3], [2, 0], [3, 2]]
-[[0, 2], [1, 0], [2, 3], [3, 1]]
-julien@ubuntu:~/0x08. N Queens$ ./0-nqueens.py 6
-[[0, 1], [1, 3], [2, 5], [3, 0], [4, 2], [5, 4]]
-[[0, 2], [1, 5], [2, 1], [3, 4], [4, 0], [5, 3]]
-[[0, 3], [1, 0], [2, 4], [3, 1], [4, 5], [5, 2]]
-[[0, 4], [1, 2], [2, 0], [3, 5], [4, 3], [5, 1]]
-julien@ubuntu:~/0x08. N Queens$
-
-```
-
-**Repo:**
-
--   GitHub repository: `alx-interview`
--   Directory: `0x05-nqueens`
--   File: `0-nqueens.py`
+if __name__ == "__main__":
+    boards = solveNQueens(num)
+    for board in boards:
+       print(board)
